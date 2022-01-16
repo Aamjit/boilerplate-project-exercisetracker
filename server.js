@@ -5,7 +5,11 @@ require('dotenv').config();
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const mongodb = require('mongodb');
+var compression = require('compression');
+var helmet = require('helmet');
 
+app.use(helmet());
+app.use(compression());
 app.use(cors())
 app.use(express.static('public'))
 app.get('/', (req, res) => {
