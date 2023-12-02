@@ -23,14 +23,18 @@ const listener = app.listen(process.env.PORT || 3000, () => {
   console.log('Your app is listening on port ' + listener.address().port)
 })
 
+mongoose.set('strictQuery', true);
 
-mongoose.connect(process.env.MDB_URL, (err)=>{
+mongoose.connect(process.env.MDB_URL, (err, db)=>{
   if(err){
     console.log("Database connection failed.");
   }else{
     console.log(`Database Connected.`);
+    // console.log(db.collections);
   }
 });
+
+const mdbExcercise = mongoose.connection;
 
 const UserModel = mongoose.model('User', new mongoose.Schema({
   username: { type: String, unique: true}
@@ -55,6 +59,9 @@ const LogInfo = mongoose.model('LogInfo', new mongoose.Schema({
 app.post('/api/users', (req, res)=>{
 
   const userFromPost = req.body.username;
+
+  // const mdbUser = mdbExcercise.collection('users');
+
   const userToInsert = new UserModel({
     username: userFromPost
   });
@@ -104,9 +111,10 @@ app.post('/api/users/:_id/exercises', (req, res)=>{
   UserModel.findById(formId, (err, userData)=>{
     if(err){
       res.send("Unknown userId");
+      console.log(err);
     }
     else{
-      
+      console.log(userData);      
       let newExercise = new ExcerciseModel({
         description: req.body.description,
         duration: req.body.duration,
